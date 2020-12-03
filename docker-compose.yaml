@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+    riboswitch:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./src/:/root/projects/ribo/src
+            - ./data/:/root/projects/ribo/data
