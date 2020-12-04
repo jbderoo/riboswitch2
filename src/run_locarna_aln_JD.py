@@ -70,6 +70,9 @@ rs_fs_files = os.listdir(rs_dir_fs)
 utr_names = [x.split('.')[0].split('_')[-1] for x in utr_files]
 
 for i in range(len(utr_files)):
+    print('There are',len(utr_files),'utr files (parent loop)')
+    print('There are', len(rs_files), 'rs files (child 1 loop)')
+    print('There are', len(rs_fs_files), 'rs_fs files (child 2 loop)')
     utr = utr_files[i]
     utr_name = f'{output_dir}/utr_negative_aln/{utr_names[i]}'
     e = open('err.txt','w')
@@ -78,8 +81,8 @@ for i in range(len(utr_files)):
     print('-------------------')
     print('aligning: %s'%utr)
     print('starting at: %s'% time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-    
-    
+
+
     alignment_scores = np.zeros((len(rs_files),3)) 
     alignment_names = []
     alignment_scores_fs = np.zeros((len(rs_files),3)) 
@@ -93,7 +96,7 @@ for i in range(len(utr_files)):
         alignment_names.append( (utr,rs)  )
         #print('The score is:',float(utr_score)/ref_score)
         if j % 50 == 0:
-            print('I am in loop 1 and have finished loop: ',j,'out of ',len(rs_files))
+            print('I am in 1st for loop and have finished loop: ',j,'out of ',len(rs_files))
     
 
     for j in range( len(rs_fs_files)):
@@ -104,7 +107,7 @@ for i in range(len(utr_files)):
         alignment_names_fs.append( (utr,rs)  )
         #print('The score is:', float(utr_score) / ref_score)
         if j % 50 == 0:
-            print('I am in loop 2 and have finished loop: ',j,'out of ',len(rs_fs_files))
+            print('I am in 2nd for loop and have finished loop: ',j,'out of ',len(rs_fs_files))
         
     #kllose()
     
