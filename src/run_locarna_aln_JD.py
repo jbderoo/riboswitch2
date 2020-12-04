@@ -91,7 +91,9 @@ for i in range(len(utr_files)):
         
         alignment_scores[i,:] =  [ref_score,  utr_score,   float(utr_score)/ref_score]
         alignment_names.append( (utr,rs)  )
-        print('The score is:',float(utr_score)/ref_score)
+        #print('The score is:',float(utr_score)/ref_score)
+        if j % 50 == 0:
+            print('I am in loop 1 and have finished loop: ',j,'out of ',len(rs_files))
     
 
     for j in range( len(rs_fs_files)):
@@ -100,7 +102,9 @@ for i in range(len(utr_files)):
         utr_score = align((utr_dir + utr),(rs_dir_fs + rs), e)
         alignment_scores_fs[i,:] =  [ref_score,  utr_score,   float(utr_score)/ref_score]
         alignment_names_fs.append( (utr,rs)  )
-        print('The score is:', float(utr_score) / ref_score)
+        #print('The score is:', float(utr_score) / ref_score)
+        if j % 50 == 0:
+            print('I am in loop 2 and have finished loop: ',j,'out of ',len(rs_fs_files))
         
     #kllose()
     
