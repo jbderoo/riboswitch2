@@ -9,7 +9,8 @@ RUN apt-get update && \
     tmux \
     python3-venv \
     vim \
-    wget
+    wget \
+    git
 
 RUN python3 -m venv .venv
 

@@ -14,12 +14,25 @@ import os
 import time
 import pickle
 
-targets = pd.read_csv("./cnn_hits.csv") 
+#targets = pd.read_csv("../data/cnn_hits.csv")
 
-utr_dir = './combined/'
-rs_dir = './rs_fa/'
-rs_dir_fs = './rs_fa_fs/'
-save_dir = './utr_aln/'
+base_data_dir = '../data'
+output_dir    = '../utr_aln'
+
+'''
+utr_dir     = f'{base_data_dir}/utr_negative_aln/combined/'
+rs_dir      = f'{base_data_dir}/utr_negative_aln/rs_fa/'
+rs_dir_fs   = f'{base_data_dir}/utr_negative_aln/rs_fa_fs/'
+save_dir    = f'{base_data_dir}/utr_negative_aln/utr_aln/'
+'''
+
+
+utr_dir     = '../data/utr_negative_aln/combined/'
+rs_dir      = '../data/utr_negative_aln/rs_fa/'
+rs_dir_fs   = '../data/utr_negative_aln/rs_fa_fs/'
+save_dir    = '../data/utr_negative_aln/utr_aln/'
+
+
 
 def make_rs_fasta(name, seq, dot):
   with open('rs_fixed.fasta','w') as f:
@@ -41,7 +54,7 @@ def make_utr_sub_fasta(name, seq):
    
    
 def align(file1,file2, e):
-    aln = subprocess.check_output( ('locarna ' + file1 + ' ' + file2  +' --struct-local=True'), shell=True,stderr= e)
+    aln = subprocess.check_output( ('locarna ' + file1 + ' ' + file2), shell=True,stderr= e)
     aln_score = int(aln.decode('utf-8').split('\n')[0].split(' ')[1])
     return aln_score
 
@@ -58,7 +71,7 @@ utr_names = [x.split('.')[0].split('_')[-1] for x in utr_files]
 
 for i in range(len(utr_files)):
     utr = utr_files[i]
-    utr_name = utr_names[i]
+    utr_name = f'{output_dir}/utr_negative_aln/{utr_names[i]}'
     e = open('err.txt','w')
     
     
@@ -73,21 +86,23 @@ for i in range(len(utr_files)):
     alignment_names_fs = []    
     for j in range( len(rs_files)):
         rs = rs_files[j]
-        ref_score = align(rs,rs)
-        utr_score = align(utr,rs )
+        ref_score = align((rs_dir + rs) ,(rs_dir + rs), e)
+        utr_score = align((utr_dir + utr),(rs_dir + rs), e)
         
         alignment_scores[i,:] =  [ref_score,  utr_score,   float(utr_score)/ref_score]
         alignment_names.append( (utr,rs)  )
+        print('The score is:',float(utr_score)/ref_score)
     
 
-    for j in range( len(rs_files)):
-        rs = rs_files[j]
-        ref_score = align(rs,rs)
-        utr_score = align(utr,rs )
+    for j in range( len(rs_fs_files)):
+        rs = rs_fs_files[j]
+        ref_score = align((rs_dir_fs + rs) ,(rs_dir_fs + rs),e)
+        utr_score = align((utr_dir + utr),(rs_dir_fs + rs), e)
         alignment_scores_fs[i,:] =  [ref_score,  utr_score,   float(utr_score)/ref_score]
-        alignment_names_fs.append( (utr,rs)  )        
+        alignment_names_fs.append( (utr,rs)  )
+        print('The score is:', float(utr_score) / ref_score)
         
-    e.close()
+    #kllose()
     
     print('finished at: %s'% time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     
@@ -97,4 +112,6 @@ for i in range(len(utr_files)):
     with open((utr_name + '_names.p'), 'wb') as handle:
         pickle.dump(alignment_names, handle)
     with open((utr_name + '_names_fs.p'), 'wb') as handle:
-        pickle.dump(alignment_names_fs, handle)        
+        pickle.dump(alignment_names_fs, handle)
+
+    1/0
