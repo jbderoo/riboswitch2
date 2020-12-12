@@ -20,26 +20,6 @@ rs_dir = '../data/utr_negative_aln/eukaryotic_RS_fastas/'
 save_dir = '../data/utr_negative_aln/utr_aln_combined/'
 
 
-def make_rs_fasta(name, seq, dot):
-    with open('rs_fixed.fasta', 'w') as f:
-        f.write(">" + name + "\n" + seq + "\n")
-        f.write(dot + " #FS" + "\n")
-
-
-def make_utr_fasta(name, seq):
-    with open('utr.fasta', 'w') as f:
-        f.write(">" + name + "\n" + seq + "\n")
-
-
-def make_non_fs_rs_fasta(name, seq):
-    with open('rs.fasta', 'w') as f:
-        f.write(">" + name + "\n" + seq + "\n")
-
-
-def make_utr_sub_fasta(name, seq):
-    with open('utr_sub.fasta', 'w') as f:
-        f.write(">" + name + "\n" + seq + "\n")
-
 
 def align(file1, file2, e):
     aln = subprocess.check_output(('locarna ' + file1 + ' ' + file2 + ' --struct-local=1'), shell=True, stderr=e)
@@ -47,7 +27,7 @@ def align(file1, file2, e):
     return aln_score
 
 
-utr_files = os.listdir(utr_dir)
+
 rs_files = os.listdir(rs_dir)
 
 utr_names = [x.split('.')[0].split('_')[-1] for x in utr_files]
