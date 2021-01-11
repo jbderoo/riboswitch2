@@ -40,7 +40,7 @@ def make_utr_sub_fasta(name, seq):
    
    
 def align(file1,file2, e):
-    aln = subprocess.check_output( ('locarna ' + file1 + ' ' + file2  +' --struct-local=1'), shell=True,stderr= e)
+    aln = subprocess.check_output( ('locarna --struct-local=1 ' + file1 + ' ' + file2), shell=True,stderr= e)
     aln_score = int(aln.decode('utf-8').split('\n')[0].split(' ')[1])
     return aln_score
 

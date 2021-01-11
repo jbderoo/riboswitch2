@@ -9,6 +9,8 @@ import sys
 import subprocess
 import os
 import time
+import numpy as np
+import pickle
 
 from os import path
 from csv import reader
@@ -28,25 +30,26 @@ def align(file1, file2, e):
 
 
 def load_rs_values(rs_file):
-    with open(rd_dir + rs_self_file, 'r') as fh:
+    with open(rs_self_file, 'r') as fh:
         csv_reader = reader(fh)
         for line in csv_reader:
             rs_list[line[0]] = line[1]
     return rs_list
 
+rs_files  = os.listdir(rs_dir)
+utr_files = os.listdir(utr_dir)
 
-if os.is_file(rd_dir + rs_self_file):
-    rs_list = load_rs_values(rd_dir + rs_self_file)
-else: 
-    rs_files = os.listdir(rs_dir)
+if os.path.isfile(rs_self_file):
+    rs_list = load_rs_values(rs_self_file)
+else:
     e = open('err.txt', 'w')
-    with open(rd_dir + rs_self_file, 'w') as fh:
-    for rs_file in rs_files:
-        token = rs_file.split('_')[1]
-        ref_score = align(rs_dir + rs_file,rs_dir + rs_file, e) # can we move this to outside the j loop and into the i loop,
-        fh.write(f'{token},{ref_score}')
-    rs_list = load_rs_values(rd_dir + rs_self_file)
-
+    with open(rs_self_file, 'w') as fh:
+        for rs_file in rs_files:
+            #print('the rs file is:',rs_file)
+            token = rs_file.split('_')[1]
+            ref_score = align(rs_file,rs_dir + rs_file, e)
+            fh.write(f'{token},{ref_score}')
+        rs_list = load_rs_values(rs_self_file)
 
 utr_names = [x.split('.')[0].split('_')[-1] for x in utr_files]
 
@@ -56,7 +59,7 @@ for i in range(len(utr_files)):
         break
 
     print('There are', len(utr_files), 'utr files (parent loop)')
-    print('There are', len(rs_files), 'rs files (child 1 loop)')
+    print('There are', len(rs_list), 'rs files (child 1 loop)') #rs_files becomes rs_list
 
     utr = utr_files[i]
     utr_name = utr_names[i]
@@ -79,14 +82,15 @@ for i in range(len(utr_files)):
             print('I have completed', j, 'alns, it has taken', diff, 'to do alns', (j - 5), 'thru', j)
             start = time.time()
 
-        rs = rs_list[j]
-
+        rs = rs_files[j]
+        token = rs.split('_')[1]
         # ref_score = align(rs_dir + rs,rs_dir+rs,e) # can we move this to outside the j loop and into the i loop,
         # or completely separate program that calculates and then fetch in loop
 
         utr_score = align(utr_dir + utr, rs_dir + rs, e)
-
-        alignment_scores[i, :] = [ref_score, utr_score, float(utr_score) / ref_score]
+        print('the rs_list is:',rs_list[token])
+        print('the token is:', token)
+        alignment_scores[i, :] = [rs_list[token], utr_score, float(utr_score) / rs_list[token]]
         alignment_names.append((utr, rs))
         # print('The score is:',float(utr_score)/ref_score)
 
